@@ -6,6 +6,7 @@ from openai import OpenAI
 
 from config import OPENAI_API_KEY, OPENAI_MODEL, PAYMENT_LINK
 from database import get_conversation, save_conversation, schedule_followup
+import notion_client as notion
 
 # Cargar configuración del agente
 _config_path = Path(__file__).parent / "skills" / "agent_config.json"
@@ -224,6 +225,13 @@ async def process_message(phone: str, user_message: str) -> list[str]:
         schedule_followup(phone, "reactivation", reactivation_time)
 
     save_conversation(phone, state)
+
+    # Sincronizar con Notion CRM (sin bloquear si falla)
+    try:
+        await notion.upsert_prospect({"phone": phone, **state})
+    except Exception as e:
+        print(f"Notion sync error: {e}")
+
     return responses
 
 
