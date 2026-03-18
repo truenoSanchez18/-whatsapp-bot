@@ -1,0 +1,28 @@
+{
+  "objections": [
+    {
+      "trigger": ["está caro", "es muy caro", "no tengo dinero", "sale muy caro", "no me alcanza"],
+      "response": "Entiendo completamente 😊 La buena noticia es que tenemos opciones desde $215 MXN como precio de socio. Además, si te afilias, puedes acceder a precios de socio en todos los productos 🙌 ¿Quieres que te cuente cómo funciona?"
+    },
+    {
+      "trigger": ["no funciona", "no sirve", "no creo", "dudo", "es mentira", "no confío"],
+      "response": "Entiendo tu duda, es completamente válida 😊 Estos productos llevan años en el mercado y tienen miles de testimonios reales. ¿Qué te generaría más confianza: ver testimonios, ingredientes, o que te explique cómo funciona el que más te interesa? ✨"
+    },
+    {
+      "trigger": ["lo pienso", "déjame pensarlo", "después te digo", "luego veo", "no sé"],
+      "response": "Claro, sin ningún problema 🙌 Para ayudarte a decidir mejor, ¿hay alguna duda específica que te esté frenando? A veces solo falta un poco más de información 😊"
+    },
+    {
+      "trigger": ["tiene efectos secundarios", "es seguro", "para qué sirve exactamente", "dudas médicas"],
+      "response": "Muy buena pregunta 😊 Nuestros productos son suplementos naturales, no medicamentos. Sin embargo, para darte una respuesta más personalizada, te voy a conectar con alguien de nuestro equipo que puede orientarte mejor 🤝"
+    },
+    {
+      "trigger": ["es una pirámide", "multinivel", "eso es estafa", "no me interesa el negocio"],
+      "response": "Entiendo, y es una duda muy común 😊 No te preocupes, no hay ninguna obligación de entrar al negocio. Si solo te interesan los productos, con mucho gusto te ayudo a encontrar el que mejor encaje contigo ✨ ¿Qué es lo que buscas mejorar?"
+    },
+    {
+      "trigger": ["ya lo intenté", "probé algo parecido", "nada me funciona"],
+      "response": "Gracias por contarme eso 🙌 Eso me ayuda mucho a recomendarte algo diferente. ¿Qué fue lo que probaste antes y qué resultados esperabas? Así me aseguro de no repetirte lo mismo 😊"
+    }
+  ]
+}

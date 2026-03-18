@@ -1,0 +1,154 @@
+{
+  "catalog_version": "Febrero 2026",
+  "categories": {
+    "digestión_y_vientre": {
+      "description": "Productos para digestión, hinchazón, vientre plano",
+      "keywords": ["barriga", "vientre", "digestión", "hinchazón", "digestivo", "intestino", "estreñimiento"],
+      "products": [
+        {"id": "PT753", "name": "MY BELLY CAPS 60 CAPS", "precio_publico": 429, "precio_socio": 215, "benefit": "cápsulas para digestión y vientre plano"},
+        {"id": "PT783", "name": "MY BELLY-T 350 G SABOR NARANJA", "precio_publico": 589, "precio_socio": 295, "benefit": "té para digestión y vientre plano, sabor naranja"},
+        {"id": "PT754", "name": "MY BELLY-T 350 G SABOR UVA", "precio_publico": 589, "precio_socio": 295, "benefit": "té para digestión y vientre plano, sabor uva"},
+        {"id": "PT781", "name": "SAVERA FIBRA 350 GR", "precio_publico": 589, "precio_socio": 295, "benefit": "fibra natural para digestión y tránsito intestinal"},
+        {"id": "PT764", "name": "DG BRAN 450 G", "precio_publico": 389, "precio_socio": 195, "benefit": "fibra de salvado para digestión"}
+      ]
+    },
+    "detox_y_limpieza": {
+      "description": "Productos para desintoxicar el cuerpo y limpieza interna",
+      "keywords": ["detox", "limpiar", "desintoxicar", "toxinas", "depurar", "limpieza"],
+      "products": [
+        {"id": "PT722", "name": "FT-ELYM DTOX CAPS 30 CAPS", "precio_publico": 589, "precio_socio": 295, "benefit": "cápsulas detox para limpiar el organismo"},
+        {"id": "PT720", "name": "FT-ELYM DTOX CAPS PRO 30 CAPS", "precio_publico": 589, "precio_socio": 295, "benefit": "cápsulas detox profesional"},
+        {"id": "PT774", "name": "FT-ELYM DTOX OXIGEN 1000 ML", "precio_publico": 949, "precio_socio": 475, "benefit": "detox oxigenado 1 litro, limpieza profunda"},
+        {"id": "PT724", "name": "FT-ELYM DTOX OXIGEN 250 ML", "precio_publico": 299, "precio_socio": 150, "benefit": "detox oxigenado 250ml, opción económica"},
+        {"id": "PT725", "name": "FT-ELYM DTOX OXIGEN 500 ML", "precio_publico": 589, "precio_socio": 295, "benefit": "detox oxigenado 500ml"},
+        {"id": "PT788", "name": "FT-ELYM DTOX OXIGEN POLVO 250 G", "precio_publico": 589, "precio_socio": 295, "benefit": "detox oxigenado en polvo"},
+        {"id": "PT721", "name": "FT-ELYM DTOX PRO TÉ 250 GR", "precio_publico": 589, "precio_socio": 295, "benefit": "té detox profesional"},
+        {"id": "PT723", "name": "FT-ELYM DTOX TÉ 250 GR", "precio_publico": 589, "precio_socio": 295, "benefit": "té detox clásico"},
+        {"id": "PT748", "name": "FTX 30 CAPS", "precio_publico": 589, "precio_socio": 295, "benefit": "cápsulas de limpieza y detox"},
+        {"id": "PT776", "name": "MY LIVE-T 250 G SABOR MENTA", "precio_publico": 599, "precio_socio": 300, "benefit": "té para hígado y depuración, sabor menta"},
+        {"id": "PT793", "name": "MY LIVE-T 250 G SABOR MARACUYA", "precio_publico": 599, "precio_socio": 300, "benefit": "té para hígado y depuración, sabor maracuyá"}
+      ]
+    },
+    "perdida_de_peso": {
+      "description": "Productos para bajar de peso, quemar grasa, control de peso",
+      "keywords": ["bajar de peso", "adelgazar", "quemar grasa", "perder peso", "peso", "dieta", "gordura", "kilos"],
+      "products": [
+        {"id": "PT757", "name": "MY LIDY FELL 60 CAPS", "precio_publico": 429, "precio_socio": 215, "benefit": "cápsulas para control de peso y quema de grasa"},
+        {"id": "PT726", "name": "FT-ELYM GEL CORPORAL 300 G", "precio_publico": 429, "precio_socio": 215, "benefit": "gel corporal reafirmante y reductor"},
+        {"id": "PT733", "name": "REVENUE 1 LT", "precio_publico": 899, "precio_socio": 450, "benefit": "suplemento completo para metabolismo y energía 1L"},
+        {"id": "PT735", "name": "MY REVENUE 60 CAPS", "precio_publico": 599, "precio_socio": 300, "benefit": "cápsulas para metabolismo y control de peso"},
+        {"id": "PT734", "name": "REVENUE SHAKE 500 GR", "precio_publico": 899, "precio_socio": 450, "benefit": "shake sustituto de comida para bajar de peso"}
+      ]
+    },
+    "shakes_proteina": {
+      "description": "Shakes y proteínas para nutrición y fitness",
+      "keywords": ["shake", "proteína", "proteina", "batido", "gym", "músculo", "musculo", "nutrición", "nutricion"],
+      "products": [
+        {"id": "PT728", "name": "FT-ELYM DTOX SHAKE CAPUCHINO 500 GR", "precio_publico": 589, "precio_socio": 295, "benefit": "shake nutritivo sabor capuchino"},
+        {"id": "PT730", "name": "FT-ELYM DTOX SHAKE CHOCOLATE 500 GR", "precio_publico": 589, "precio_socio": 295, "benefit": "shake nutritivo sabor chocolate"},
+        {"id": "PT729", "name": "FT-ELYM DTOX SHAKE FRUTOS ROJOS 500 GR", "precio_publico": 589, "precio_socio": 295, "benefit": "shake nutritivo sabor frutos rojos"},
+        {"id": "PT732", "name": "FT-ELYM DTOX SHAKE MANGO TANGO 500 GR", "precio_publico": 589, "precio_socio": 295, "benefit": "shake nutritivo sabor mango"},
+        {"id": "PT727", "name": "FT-ELYM DTOX SHAKE PIÑA COCO 500 GR", "precio_publico": 589, "precio_socio": 295, "benefit": "shake nutritivo sabor piña coco"},
+        {"id": "PT731", "name": "FT-ELYM DTOX SHAKE VAINILLA GALLETA 500 GR", "precio_publico": 589, "precio_socio": 295, "benefit": "shake nutritivo sabor vainilla galleta"},
+        {"id": "PT777", "name": "FT-ELYM DTOX SHAKE NUEZ DORADA 500 GR", "precio_publico": 589, "precio_socio": 295, "benefit": "shake nutritivo sabor nuez dorada"},
+        {"id": "PT794", "name": "FT-ELYM DTX SHAKE PLATANO 500 GR", "precio_publico": 589, "precio_socio": 295, "benefit": "shake nutritivo sabor plátano"},
+        {"id": "PT804", "name": "VYBES LACTO IGNIZE VAINILLA 500 G", "precio_publico": 999, "precio_socio": 500, "benefit": "proteína láctea premium sabor vainilla"},
+        {"id": "PT806", "name": "VYBES THERRA PROTEIN VAINILLA 1 KG", "precio_publico": 1499, "precio_socio": 750, "benefit": "proteína premium 1kg sabor vainilla"},
+        {"id": "PT803", "name": "VYBES THERRA PROTEIN CACAO 1 KG", "precio_publico": 1499, "precio_socio": 750, "benefit": "proteína premium 1kg sabor cacao"},
+        {"id": "PT814", "name": "TRIBE CREATHY 250 G", "precio_publico": 799, "precio_socio": 400, "benefit": "creatina para rendimiento físico"}
+      ]
+    },
+    "energia_y_cafe": {
+      "description": "Productos para energía, concentración y café funcional",
+      "keywords": ["energía", "energia", "cansancio", "café", "cafe", "enfoque", "concentración", "concentracion", "fatiga"],
+      "products": [
+        {"id": "PT758", "name": "A-COFF JARABE 250 ML", "precio_publico": 429, "precio_socio": 215, "benefit": "jarabe energizante con café"},
+        {"id": "PT737", "name": "ORIGEN CAFÉ 1 KG SABOR LATTE", "precio_publico": 1459, "precio_socio": 730, "benefit": "café funcional 1kg sabor latte"},
+        {"id": "PT780", "name": "ORIGEN CAFÉ 250 GR BLACK COFFEE", "precio_publico": 589, "precio_socio": 295, "benefit": "café funcional negro"},
+        {"id": "PT739", "name": "ORIGEN CAFÉ 250 GR CAPUCCINO", "precio_publico": 589, "precio_socio": 295, "benefit": "café funcional sabor capuccino"},
+        {"id": "PT740", "name": "ORIGEN CAFÉ 250 GR CHAI", "precio_publico": 589, "precio_socio": 295, "benefit": "café funcional sabor chai"},
+        {"id": "PT738", "name": "ORIGEN CAFÉ 250 GR COCO", "precio_publico": 589, "precio_socio": 295, "benefit": "café funcional sabor coco"},
+        {"id": "PT741", "name": "ORIGEN CAFÉ 250 GR LATTE", "precio_publico": 589, "precio_socio": 295, "benefit": "café funcional sabor latte"},
+        {"id": "PT785", "name": "ORIGEN CAFÉ 250 GR VAINILLA", "precio_publico": 599, "precio_socio": 300, "benefit": "café funcional sabor vainilla"},
+        {"id": "PT796", "name": "INTENS-MN", "precio_publico": 599, "precio_socio": 300, "benefit": "suplemento para energía e intensidad"},
+        {"id": "PT812", "name": "VYBES PRANA 30 CAPS", "precio_publico": 649, "precio_socio": 325, "benefit": "cápsulas de energía y vitalidad"},
+        {"id": "PT812", "name": "VYBES PRANA 60 CAPS", "precio_publico": 999, "precio_socio": 500, "benefit": "cápsulas de energía y vitalidad 60 caps"}
+      ]
+    },
+    "piel_y_skincare": {
+      "description": "Productos para la piel, rostro, cuidado personal",
+      "keywords": ["piel", "rostro", "cara", "acné", "manchas", "arrugas", "hidratación", "hidratacion", "crema", "colágeno", "colageno", "anti-edad"],
+      "products": [
+        {"id": "PT768", "name": "CREMA ADN VEGETAL 50 ML", "precio_publico": 599, "precio_socio": 300, "benefit": "crema facial con ADN vegetal regenerador"},
+        {"id": "PT770", "name": "BABA DE CARACOL Y ROSA MOSQUETA 120 ML", "precio_publico": 429, "precio_socio": 215, "benefit": "crema reparadora con baba de caracol"},
+        {"id": "PT769", "name": "BOTOX Y ACIDO HIALURONICO 120 ML", "precio_publico": 429, "precio_socio": 215, "benefit": "crema efecto botox con ácido hialurónico"},
+        {"id": "PT771", "name": "COLAGENO + ELASTINA 120 ML", "precio_publico": 429, "precio_socio": 215, "benefit": "crema con colágeno y elastina para firmeza"},
+        {"id": "PT773", "name": "JALEA REAL Y VITAMINA E 120 ML", "precio_publico": 429, "precio_socio": 215, "benefit": "crema nutritiva con jalea real y vitamina E"},
+        {"id": "PT784", "name": "SERUM VITAMINA C 30 ML", "precio_publico": 799, "precio_socio": 400, "benefit": "sérum vitamina C para luminosidad y manchas"},
+        {"id": "PT766", "name": "MICROEXFOLIANTE 120 ML", "precio_publico": 319, "precio_socio": 160, "benefit": "exfoliante facial para limpiar poros"},
+        {"id": "PT767", "name": "REGENERADOR CELULAR 20 ML", "precio_publico": 599, "precio_socio": 300, "benefit": "regenerador celular concentrado anti-edad"},
+        {"id": "PT772", "name": "MAHAL BODY CREAM 300 ML", "precio_publico": 429, "precio_socio": 215, "benefit": "crema corporal nutritiva y reafirmante"}
+      ]
+    },
+    "articulaciones_y_movilidad": {
+      "description": "Productos para articulaciones, huesos, dolor muscular",
+      "keywords": ["articulaciones", "rodillas", "huesos", "dolor", "inflamación", "inflamacion", "colágeno articular", "movilidad"],
+      "products": [
+        {"id": "PT775", "name": "MY GS-TREL 60 CAPS", "precio_publico": 429, "precio_socio": 215, "benefit": "cápsulas para articulaciones y movilidad"},
+        {"id": "PT736", "name": "OMG 369 60 HIDROCAPS", "precio_publico": 599, "precio_socio": 300, "benefit": "omega 3-6-9 para articulaciones y corazón"}
+      ]
+    },
+    "azucar_y_metabolismo": {
+      "description": "Productos para control de azúcar, diabetes, metabolismo",
+      "keywords": ["azúcar", "azucar", "diabetes", "glucosa", "metabolismo", "insulina"],
+      "products": [
+        {"id": "PT743", "name": "MY SUKER 60 CAPS", "precio_publico": 429, "precio_socio": 215, "benefit": "cápsulas para control de niveles de azúcar"},
+        {"id": "PT744", "name": "SUKER JUICE 500 ML", "precio_publico": 589, "precio_socio": 295, "benefit": "jugo funcional para control de glucosa"},
+        {"id": "PT762", "name": "STEFYA ENDULZANTE 20 ML", "precio_publico": 389, "precio_socio": 195, "benefit": "endulzante natural saludable"}
+      ]
+    },
+    "sistema_inmune": {
+      "description": "Productos para fortalecer el sistema inmune y defensas",
+      "keywords": ["defensas", "inmune", "inmunidad", "gripe", "resfriado", "virus", "bacteria", "plata coloidal"],
+      "products": [
+        {"id": "PT779", "name": "AG COLOIDAL 500 ML", "precio_publico": 549, "precio_socio": 275, "benefit": "plata coloidal 500ml para sistema inmune"},
+        {"id": "PT765", "name": "AG COLOIDAL 250 ML", "precio_publico": 429, "precio_socio": 215, "benefit": "plata coloidal 250ml para sistema inmune"},
+        {"id": "PT795", "name": "REVEN-VIT", "precio_publico": 599, "precio_socio": 300, "benefit": "vitaminas y minerales para defensas"}
+      ]
+    },
+    "descanso_y_estres": {
+      "description": "Productos para mejorar el sueño, reducir estrés y ansiedad",
+      "keywords": ["dormir", "sueño", "sueño", "insomnio", "estrés", "estres", "ansiedad", "relajar", "descanso"],
+      "products": [
+        {"id": "PT760", "name": "MY ST-MORY 60 CAPS", "precio_publico": 429, "precio_socio": 215, "benefit": "cápsulas para mejorar sueño y memoria"},
+        {"id": "PT755", "name": "S-MN 3 CAPS", "precio_publico": 429, "precio_socio": 215, "benefit": "suplemento para relajación y sueño"}
+      ]
+    },
+    "bienestar_general": {
+      "description": "Productos multibeneficio y bienestar general",
+      "keywords": ["bienestar", "salud", "vitaminas", "general", "múltiple", "multiple"],
+      "products": [
+        {"id": "PT745", "name": "SAVERA JUICE 1L", "precio_publico": 589, "precio_socio": 295, "benefit": "jugo funcional multibeneficio 1 litro"},
+        {"id": "PT746", "name": "BE GREEN 1 LT", "precio_publico": 599, "precio_socio": 300, "benefit": "bebida verde con superalimentos 1 litro"},
+        {"id": "PT747", "name": "BE GREEN 500 ML", "precio_publico": 429, "precio_socio": 215, "benefit": "bebida verde con superalimentos 500ml"},
+        {"id": "PT790", "name": "XUGO VRD 250 G", "precio_publico": 529, "precio_socio": 265, "benefit": "jugo verde en polvo con superalimentos"},
+        {"id": "PT761", "name": "MY MILK 450 GR", "precio_publico": 229, "precio_socio": 115, "benefit": "leche funcional nutritiva"},
+        {"id": "PT797", "name": "YANG EUCALIPTO", "precio_publico": 429, "precio_socio": 215, "benefit": "suplemento con eucalipto para bienestar respiratorio"},
+        {"id": "PT802", "name": "X-PRO 60 ML", "precio_publico": 429, "precio_socio": 215, "benefit": "suplemento concentrado multibeneficio"}
+      ]
+    },
+    "mahal_line": {
+      "description": "Línea Mahal - productos especializados",
+      "keywords": ["mahal", "extracto", "gummies"],
+      "products": [
+        {"id": "PT750", "name": "MY MAHAL 60 CAPS", "precio_publico": 429, "precio_socio": 215, "benefit": "cápsulas línea Mahal"},
+        {"id": "PT752", "name": "MAHAL EXTRACTO 500 ML", "precio_publico": 529, "precio_socio": 265, "benefit": "extracto Mahal 500ml"},
+        {"id": "PT786", "name": "MAHAL GUMMY BEARS", "precio_publico": 999, "precio_socio": 500, "benefit": "gomitas Mahal premium"},
+        {"id": "PT751", "name": "MY MAHAL TÉ 250 GR", "precio_publico": 489, "precio_socio": 245, "benefit": "té línea Mahal"},
+        {"id": "PT749", "name": "MY RIURY 60 CAPS", "precio_publico": 429, "precio_socio": 215, "benefit": "cápsulas de bienestar"},
+        {"id": "PT756", "name": "MY PRO-ST CAPS 60 CAPS", "precio_publico": 429, "precio_socio": 215, "benefit": "cápsulas para próstata y vías urinarias"},
+        {"id": "PT759", "name": "MY SIR-Q 60 CAPS", "precio_publico": 429, "precio_socio": 215, "benefit": "cápsulas con sirtuínas para longevidad"}
+      ]
+    }
+  }
+}

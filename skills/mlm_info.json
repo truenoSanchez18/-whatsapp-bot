@@ -1,0 +1,40 @@
+{
+  "mlm_business": {
+    "name": "Oportunidad de Afiliación",
+    "elevator_pitch": "Un negocio flexible donde puedes generar ingresos extra vendiendo productos de bienestar que ya funcionan, con el respaldo de una comunidad y un sistema de comisiones claro.",
+    "main_benefits": [
+      "Trabajas desde donde quieras, a tu ritmo",
+      "No necesitas experiencia previa en ventas",
+      "Accedes a precios de socio en todos los productos",
+      "Ganas comisiones por tus ventas directas",
+      "Puedes construir un equipo y ganar comisiones residuales",
+      "Capacitación y materiales incluidos"
+    ],
+    "affiliate_levels": [
+      {"level": "Socio", "description": "Compras a precio de socio y vendes al público"},
+      {"level": "Distribuidor", "description": "Tienes tu propio equipo y ganas comisiones adicionales"},
+      {"level": "Líder", "description": "Líderas una red y accedes a bonos especiales"}
+    ],
+    "how_to_start": "El primer paso es conocer el catálogo, elegir un paquete de inicio y comenzar a usar los productos tú mismo. Un asesor del equipo te acompaña en todo el proceso.",
+    "ideal_for": [
+      "Personas que buscan un ingreso extra flexible",
+      "Emprendedores que quieren su propio negocio sin inversión alta",
+      "Personas que ya usan y creen en los productos",
+      "Quienes tienen habilidad natural para relacionarse con personas"
+    ],
+    "faq": [
+      {
+        "question": "¿Cuánto cuesta afiliarse?",
+        "answer": "El costo de afiliación es accesible y se recupera rápidamente con tus primeras ventas. Te paso con un asesor para darte el detalle exacto según el paquete que más te convenga."
+      },
+      {
+        "question": "¿Cuánto puedo ganar?",
+        "answer": "Depende de tu dedicación y tu red. Algunos socios generan un ingreso extra de $2,000-$5,000 al mes con ventas directas, y quienes construyen equipo pueden llegar a mucho más. No prometemos cifras exactas, pero sí un sistema que funciona si lo trabajas."
+      },
+      {
+        "question": "¿Tengo que comprar inventario?",
+        "answer": "No necesariamente. Puedes tomar pedidos y gestionar las entregas sin manejar inventario físico desde el inicio."
+      }
+    ]
+  }
+}
