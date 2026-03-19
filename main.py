@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 
 from config import PORT
 from database import init_db
-from whapi_client import extract_message_data, send_text
+from whapi_client import extract_message_data, send_text, send_image, transcribe_audio
 from agent import process_message
 from scheduler import run_scheduler
 
@@ -76,6 +76,7 @@ async def webhook(request: Request):
     phone = msg_data["phone"]
     user_message = msg_data["body"]
     msg_type = msg_data["type"]
+    media_url = msg_data.get("media_url")
 
     logger.info(f"Mensaje de {phone} [{msg_type}]: {user_message[:80]}")
 
@@ -83,23 +84,36 @@ async def webhook(request: Request):
         user_message = f"[el usuario envió un {msg_type}]"
 
     # Procesar en background para responder 200 rápido a Whapi
-    asyncio.create_task(_process_and_reply(phone, user_message))
+    asyncio.create_task(_process_and_reply(phone, user_message, msg_type, media_url))
 
     return JSONResponse({"status": "ok"})
 
 
-async def _process_and_reply(phone: str, user_message: str):
+async def _process_and_reply(phone: str, user_message: str, msg_type: str = "text", media_url: str = None):
+    # Transcribir audio con Whisper si aplica
+    if msg_type in ("audio", "voice", "ptt") and media_url:
+        logger.info(f"Transcribiendo audio de {phone}...")
+        transcribed = await transcribe_audio(media_url)
+        if transcribed:
+            user_message = transcribed
+            logger.info(f"Audio transcrito: {transcribed[:80]}")
+        else:
+            user_message = "[audio no pudo transcribirse]"
+
     try:
         responses = await process_message(phone, user_message)
     except Exception as e:
         logger.error(f"Error procesando mensaje de {phone}: {e}", exc_info=True)
         return
 
-    for i, response in enumerate(responses):
+    for i, item in enumerate(responses):
         if i > 0:
             await asyncio.sleep(1.5)
         try:
-            await send_text(phone, response)
+            if isinstance(item, dict) and item.get("type") == "image":
+                await send_image(phone, item["url"], item.get("caption", ""))
+            else:
+                await send_text(phone, item)
         except Exception as e:
             logger.error(f"Error enviando mensaje a {phone}: {e}")
 

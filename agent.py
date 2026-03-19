@@ -1,4 +1,5 @@
 import json
+import re
 from pathlib import Path
 from datetime import datetime, timedelta
 
@@ -13,12 +14,48 @@ _config_path = Path(__file__).parent / "skills" / "agent_config.json"
 with open(_config_path, encoding="utf-8") as f:
     AGENT_CONFIG = json.load(f)
 
-# Cargar catálogo de productos
+# Cargar catálogo de productos (para system prompt)
 _catalog_path = Path(__file__).parent / "skills" / "catalog.json"
 with open(_catalog_path, encoding="utf-8") as f:
     CATALOG = json.load(f)
 
+# Cargar catálogo con imágenes (para envío de fotos de productos)
+_images_path = Path(__file__).parent / "skills" / "catalogo_con_imagenes.json"
+with open(_images_path, encoding="utf-8") as f:
+    _CATALOG_IMAGES = json.load(f)
+
+# Índice de imágenes: codigo -> url y nombre normalizado -> url
+_IMAGE_BY_CODE: dict[str, str] = {}
+_IMAGE_BY_NAME: dict[str, str] = {}
+
+for _p in _CATALOG_IMAGES.get("productos", []):
+    _url = _p.get("imagen_url", "")
+    if not _url:
+        continue
+    _codes = _p.get("codigo", "")
+    if isinstance(_codes, list):
+        for _c in _codes:
+            if _c:
+                _IMAGE_BY_CODE[_c.upper()] = _url
+    elif _codes:
+        _IMAGE_BY_CODE[_codes.upper()] = _url
+    _name_key = re.sub(r"\s+", " ", _p.get("nombre", "")).strip().upper()
+    if _name_key:
+        _IMAGE_BY_NAME[_name_key] = _url
+
 client = OpenAI(api_key=OPENAI_API_KEY)
+
+
+def get_product_image(product_code_or_name: str) -> str | None:
+    """Busca la imagen de un producto por código o nombre."""
+    key = product_code_or_name.strip().upper()
+    if key in _IMAGE_BY_CODE:
+        return _IMAGE_BY_CODE[key]
+    # Búsqueda parcial por nombre
+    for name_key, url in _IMAGE_BY_NAME.items():
+        if key in name_key or name_key in key:
+            return url
+    return None
 
 
 def _build_catalog_text() -> str:
@@ -97,20 +134,43 @@ Cuando el prospecto confirme que quiere comprar, usa este link:
 - El usuario dice que no le interesa
 - Después de completar la venta
 
+=== RECOMENDACIÓN DE COMBOS (MUY IMPORTANTE) ===
+Cuando el cliente mencione una necesidad específica, recomienda 2-3 productos complementarios que trabajen juntos:
+- Bajar de peso + digestión: FT-ELYM CAPS + DG BRAN + MY BELLY CAPS
+- Bajar de peso + energía: FT-ELYM PRO CAPS + ORIGEN CAFÉ + MY REVENUE
+- Articulaciones + inflamación: FTX + OMG 369 + MY GS-TREL
+- Estrés + sueño: MY MAHAL + S-MN + MY ST-MORY
+- Diabéticos / azúcar: MY SUKER + SUKER JUICE + FT-ELYM DTOX
+- Detox completo: FT-ELYM DTOX + MY LIVE-T + BE GREEN
+- Piel + colágeno: SERUM VITAMINA C + ADN VEGETAL + COLÁGENO + ELASTINA
+- Energía + rendimiento: ORIGEN CAFÉ + VYBES PRANA + INTENS-MN
+- Inmunidad: AG COLOIDAL + X-PRO + REVEN-VIT
+Presenta el combo como "protocolo" o "kit" — siempre con precio y beneficio claro de cada uno.
+
 === CLASIFICACIÓN DE INTENCIÓN ===
-Al final de tu respuesta incluye esta línea (NO la muestre al usuario):
+Al final de tu respuesta incluye AMBAS líneas (NO las muestre al usuario):
 [STATE: intent_route=product|business|both, lead_temperature=hot|warm|cold|risk, name=NombreDelProspecto, need=ResumenNecesidad, status=active|closed|human_handoff|follow_up_scheduled]
+[RECOMMEND: CODIGO1,CODIGO2] ← solo cuando recomiendes productos concretos, usa los códigos PT7XX. Si no hay recomendación esta línea no va.
 
 Solo incluye los campos que tengas información para actualizar.
 
-Responde SOLAMENTE con el mensaje para el prospecto (más la línea STATE). Sin explicaciones extras.
+Responde SOLAMENTE con el mensaje para el prospecto (más las líneas STATE/RECOMMEND). Sin explicaciones extras.
 
 {_build_catalog_text()}"""
 
 
-def _parse_state_update(response_text: str) -> tuple[str, dict]:
+def _parse_state_update(response_text: str) -> tuple[str, dict, list[str]]:
+    """Retorna (mensaje_limpio, state_updates, lista_de_codigos_recomendados)."""
     state_updates = {}
+    recommended_codes = []
     clean_message = response_text
+
+    # Extraer [RECOMMEND: ...] primero
+    recommend_match = re.search(r"\[RECOMMEND:\s*([^\]]+)\]", response_text)
+    if recommend_match:
+        codes_raw = recommend_match.group(1)
+        recommended_codes = [c.strip() for c in codes_raw.split(",") if c.strip()]
+        response_text = response_text.replace(recommend_match.group(0), "").strip()
 
     if "[STATE:" in response_text:
         parts = response_text.split("[STATE:")
@@ -122,8 +182,10 @@ def _parse_state_update(response_text: str) -> tuple[str, dict]:
             if "=" in item:
                 key, value = item.split("=", 1)
                 state_updates[key.strip()] = value.strip()
+    else:
+        clean_message = response_text.strip()
 
-    return clean_message, state_updates
+    return clean_message, state_updates, recommended_codes
 
 
 def _should_send_payment_link(message: str, state: dict) -> bool:
@@ -187,7 +249,7 @@ async def process_message(phone: str, user_message: str) -> list[str]:
     raw_response = response.choices[0].message.content
     print(f"Respuesta OpenAI: {raw_response[:100]}")
 
-    clean_message, state_updates = _parse_state_update(raw_response)
+    clean_message, state_updates, recommended_codes = _parse_state_update(raw_response)
 
     if "intent_route" in state_updates:
         state["intent_route"] = state_updates["intent_route"]
@@ -199,12 +261,22 @@ async def process_message(phone: str, user_message: str) -> list[str]:
         state["need_or_motivation"] = state_updates["need"]
     if "status" in state_updates:
         state["conversation_status"] = state_updates["status"]
+    if recommended_codes:
+        state["recommended_offer"] = ", ".join(recommended_codes)
 
     history.append({"role": "assistant", "content": clean_message, "ts": datetime.utcnow().isoformat()})
     state["history"] = history
     state["last_message_summary"] = user_message[:100]
 
     responses.append(clean_message)
+
+    # Enviar imagen(es) del/los producto(s) recomendado(s)
+    sent_urls = set()
+    for code in recommended_codes[:2]:  # máximo 2 imágenes
+        img_url = get_product_image(code)
+        if img_url and img_url not in sent_urls:
+            responses.append({"type": "image", "url": img_url, "caption": ""})
+            sent_urls.add(img_url)
 
     if _should_send_payment_link(user_message, state):
         name = state.get("name", "")

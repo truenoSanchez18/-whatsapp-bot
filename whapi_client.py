@@ -1,11 +1,45 @@
+import io
 import httpx
-from config import WHAPI_API_KEY, WHAPI_BASE_URL
+from openai import OpenAI
+from config import WHAPI_API_KEY, WHAPI_BASE_URL, OPENAI_API_KEY
 
 
 HEADERS = {
     "Authorization": f"Bearer {WHAPI_API_KEY}",
     "Content-Type": "application/json",
 }
+
+_openai = OpenAI(api_key=OPENAI_API_KEY)
+
+
+async def transcribe_audio(media_url: str) -> str:
+    """
+    Descarga un audio de Whapi y lo transcribe con Whisper.
+    Retorna el texto transcrito o un mensaje de error descriptivo.
+    """
+    try:
+        # Descargar el audio desde Whapi
+        async with httpx.AsyncClient(timeout=30) as client:
+            resp = await client.get(
+                media_url,
+                headers={"Authorization": f"Bearer {WHAPI_API_KEY}"},
+            )
+            resp.raise_for_status()
+            audio_bytes = resp.content
+
+        # Transcribir con Whisper
+        audio_file = io.BytesIO(audio_bytes)
+        audio_file.name = "audio.ogg"
+        result = _openai.audio.transcriptions.create(
+            model="whisper-1",
+            file=audio_file,
+            language="es",
+        )
+        return result.text.strip()
+
+    except Exception as e:
+        print(f"Error transcribiendo audio: {e}")
+        return ""
 
 
 async def send_text(phone: str, message: str):
@@ -87,14 +121,18 @@ def extract_message_data(webhook_body: dict) -> dict | None:
         phone = phone.split("@")[0]
 
     body = ""
+    media_url = None
     if msg_type == "text":
         body = msg.get("text", {}).get("body", "") if isinstance(msg.get("text"), dict) else msg.get("body", "")
     elif msg_type == "image":
         body = "[imagen]"
+        media_url = msg.get("image", {}).get("link") or msg.get("media_url")
     elif msg_type == "video":
         body = "[video]"
-    elif msg_type == "audio":
+    elif msg_type in ("audio", "voice", "ptt"):
         body = "[audio]"
+        audio_data = msg.get("audio") or msg.get("voice") or {}
+        media_url = audio_data.get("link") or msg.get("media_url")
     elif msg_type == "document":
         body = "[documento]"
     else:
@@ -108,4 +146,5 @@ def extract_message_data(webhook_body: dict) -> dict | None:
         "body": body.strip(),
         "type": msg_type,
         "message_id": msg.get("id", ""),
+        "media_url": media_url,
     }
