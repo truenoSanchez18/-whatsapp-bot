@@ -30,6 +30,10 @@ def init_db():
             human_handoff_requested INTEGER DEFAULT 0,
             follow_up_count INTEGER DEFAULT 0,
             conversation_status TEXT DEFAULT 'new',
+            notification_day INTEGER DEFAULT 0,
+            last_notification_date TEXT DEFAULT '',
+            lead_magnets_sent TEXT DEFAULT '[]',
+            subscribed INTEGER DEFAULT 1,
             history TEXT DEFAULT '[]',
             created_at TEXT,
             updated_at TEXT
@@ -72,13 +76,19 @@ def get_conversation(phone: str) -> dict:
             "human_handoff_requested": False,
             "follow_up_count": 0,
             "conversation_status": "new",
+            "notification_day": 0,
+            "last_notification_date": "",
+            "lead_magnets_sent": [],
+            "subscribed": True,
             "history": [],
         }
 
     data = dict(row)
     data["history"] = json.loads(data["history"] or "[]")
+    data["lead_magnets_sent"] = json.loads(data.get("lead_magnets_sent") or "[]")
     data["payment_link_sent"] = bool(data["payment_link_sent"])
     data["human_handoff_requested"] = bool(data["human_handoff_requested"])
+    data["subscribed"] = bool(data.get("subscribed", 1))
     return data
 
 
@@ -89,13 +99,16 @@ def save_conversation(phone: str, state: dict):
 
     history_json = json.dumps(state.get("history", []), ensure_ascii=False)
 
+    lead_magnets_json = json.dumps(state.get("lead_magnets_sent", []), ensure_ascii=False)
+
     cursor.execute("""
         INSERT INTO conversations (
             phone, name, language, intent_route, need_or_motivation,
             lead_temperature, recommended_offer, last_message_summary,
             payment_link_sent, human_handoff_requested, follow_up_count,
-            conversation_status, history, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            conversation_status, notification_day, last_notification_date,
+            lead_magnets_sent, subscribed, history, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT(phone) DO UPDATE SET
             name=excluded.name,
             language=excluded.language,
@@ -108,6 +121,10 @@ def save_conversation(phone: str, state: dict):
             human_handoff_requested=excluded.human_handoff_requested,
             follow_up_count=excluded.follow_up_count,
             conversation_status=excluded.conversation_status,
+            notification_day=excluded.notification_day,
+            last_notification_date=excluded.last_notification_date,
+            lead_magnets_sent=excluded.lead_magnets_sent,
+            subscribed=excluded.subscribed,
             history=excluded.history,
             updated_at=excluded.updated_at
     """, (
@@ -123,6 +140,10 @@ def save_conversation(phone: str, state: dict):
         1 if state.get("human_handoff_requested") else 0,
         state.get("follow_up_count", 0),
         state.get("conversation_status", "new"),
+        state.get("notification_day", 0),
+        state.get("last_notification_date", ""),
+        lead_magnets_json,
+        1 if state.get("subscribed", True) else 0,
         history_json,
         now,
         now,
@@ -152,6 +173,22 @@ def get_pending_followups(now: datetime) -> list:
     """, (now.isoformat(),))
     rows = [dict(r) for r in cursor.fetchall()]
     conn.close()
+    return rows
+
+
+def get_all_subscribers() -> list:
+    """Retorna todos los usuarios suscritos a notificaciones."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM conversations WHERE subscribed = 1")
+    rows = [dict(r) for r in cursor.fetchall()]
+    conn.close()
+    for row in rows:
+        row["history"] = json.loads(row.get("history") or "[]")
+        row["lead_magnets_sent"] = json.loads(row.get("lead_magnets_sent") or "[]")
+        row["payment_link_sent"] = bool(row.get("payment_link_sent"))
+        row["human_handoff_requested"] = bool(row.get("human_handoff_requested"))
+        row["subscribed"] = bool(row.get("subscribed", 1))
     return rows
 
 

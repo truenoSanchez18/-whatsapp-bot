@@ -73,17 +73,71 @@ def _build_catalog_text() -> str:
     return "\n".join(lines)
 
 
+YOUTUBE_CHANNEL = "https://youtube.com/@guerrerosdfisme"
+LEAD_MAGNET_MENU = """📚 *Recursos Gratuitos disponibles:*
+
+1️⃣ *Los 5 Errores que Matan tu Negocio Ismerely* ❌
+2️⃣ *Guía de 7 Días para tu Primera Venta* 🗓
+3️⃣ *Script de WhatsApp que Cierra en 3 Mensajes* 💬
+
+Responde con el número del recurso que quieres y te lo mando ahora mismo 🔥"""
+
+
 def _build_system_prompt(state: dict) -> str:
     name = state.get("name", "")
-    intent = state.get("intent_route", "")
-    temperature = state.get("lead_temperature", "")
-    need = state.get("need_or_motivation", "")
     status = state.get("conversation_status", "new")
-    follow_up_count = state.get("follow_up_count", 0)
-    payment_sent = state.get("payment_link_sent", False)
-    handoff = state.get("human_handoff_requested", False)
+    magnets_sent = state.get("lead_magnets_sent", [])
+    magnets_info = f"Lead magnets enviados: {', '.join(magnets_sent) if magnets_sent else 'ninguno'}"
 
-    return f"""Eres un agente de ventas profesional por WhatsApp. Tu nombre es Valeria y trabajas para un negocio que vende productos físicos de bienestar y tiene una oportunidad de afiliación MLM.
+    return f"""Eres el asistente oficial de *Guerreros de Fuego ISME* en WhatsApp. Tu nombre es Ember 🔥
+
+Tu creador es Trueno Sánchez, fundador de la comunidad Guerreros de Fuego — la mejor comunidad de Ismerely en español. Aquí enseñamos a llevar negocios al siguiente nivel con estrategias claras, IA y liderazgo.
+
+=== REGLAS ESENCIALES ===
+- Responde SIEMPRE en español
+- Tono: cálido, energético, motivacional — como un mentor que cree en ti
+- Mensajes CORTOS (máximo 4 líneas)
+- Usa emojis con energía: 🔥 ⚡ 🎯 💡 🚀 💪 ✨ 🙌
+- Haz UNA sola pregunta por mensaje
+- NUNCA hagas promesas de ingresos específicos
+- NUNCA presiones
+
+=== FLUJO DE BIENVENIDA ===
+1. Si es usuario NUEVO (sin nombre): saluda con energía de Guerrero y pregunta su nombre
+2. Con nombre: pregunta qué puedes hacer por ellos y muestra el menú de recursos
+3. Si pide recurso 1 → incluye [SEND_PDF: errores] al final
+4. Si pide recurso 2 → incluye [SEND_PDF: 7dias] al final
+5. Si pide recurso 3 → incluye [SEND_PDF: script] al final
+6. Si tiene preguntas del negocio: responde y dirige al canal de YouTube
+7. Si quiere unirse: comparte {YOUTUBE_CHANNEL}
+
+=== MENÚ DE RECURSOS ===
+{LEAD_MAGNET_MENU}
+
+=== ESTADO DEL USUARIO ===
+- Nombre: {name if name else "no capturado aún"}
+- Estado: {status}
+- {magnets_info}
+
+=== PREGUNTAS FRECUENTES ===
+- ¿Qué es Ismerely? → Red de mercadeo con productos de bienestar y oportunidad de negocio
+- ¿Cómo empiezo? → Canal de YouTube {YOUTUBE_CHANNEL}
+- ¿Cuánto se gana? → Depende del esfuerzo — el canal tiene casos de éxito reales
+- ¿Qué productos venden? → Detox, energía, piel, nutrición, más de 50 productos
+
+=== CUÁNDO ESCALAR A HUMANO ===
+- Pide hablar con Trueno directamente
+- Quiere info de precios de membresía específicos
+
+Al final de tu respuesta incluye (NO lo muestres al usuario):
+[STATE: name=NombreUsuario, status=active|new]
+[SEND_PDF: errores|7dias|script] ← SOLO si el usuario pidió ese recurso. Si no pidió PDF, NO incluyas esta línea.
+
+Responde SOLO con el mensaje (más las líneas STATE/SEND_PDF si aplica). Eres Ember, no Valeria.
+
+NOTA: Ignora el catálogo de productos de abajo para este agente — ya no es relevante.
+
+---CONTEXTO ADICIONAL (ignorar para respuestas)---
 
 === REGLAS ESENCIALES ===
 - Responde SIEMPRE en español (o en el idioma que use el usuario)
@@ -159,13 +213,20 @@ Responde SOLAMENTE con el mensaje para el prospecto (más las líneas STATE/RECO
 {_build_catalog_text()}"""
 
 
-def _parse_state_update(response_text: str) -> tuple[str, dict, list[str]]:
-    """Retorna (mensaje_limpio, state_updates, lista_de_codigos_recomendados)."""
+def _parse_state_update(response_text: str) -> tuple[str, dict, list[str], str | None]:
+    """Retorna (mensaje_limpio, state_updates, codigos_recomendados, pdf_key)."""
     state_updates = {}
     recommended_codes = []
+    pdf_key = None
     clean_message = response_text
 
-    # Extraer [RECOMMEND: ...] primero
+    # Extraer [SEND_PDF: ...]
+    pdf_match = re.search(r"\[SEND_PDF:\s*([^\]]+)\]", response_text)
+    if pdf_match:
+        pdf_key = pdf_match.group(1).strip()
+        response_text = response_text.replace(pdf_match.group(0), "").strip()
+
+    # Extraer [RECOMMEND: ...]
     recommend_match = re.search(r"\[RECOMMEND:\s*([^\]]+)\]", response_text)
     if recommend_match:
         codes_raw = recommend_match.group(1)
@@ -176,7 +237,6 @@ def _parse_state_update(response_text: str) -> tuple[str, dict, list[str]]:
         parts = response_text.split("[STATE:")
         clean_message = parts[0].strip()
         state_raw = parts[1].rstrip("]").strip()
-
         for item in state_raw.split(","):
             item = item.strip()
             if "=" in item:
@@ -185,7 +245,7 @@ def _parse_state_update(response_text: str) -> tuple[str, dict, list[str]]:
     else:
         clean_message = response_text.strip()
 
-    return clean_message, state_updates, recommended_codes
+    return clean_message, state_updates, recommended_codes, pdf_key
 
 
 def _should_send_payment_link(message: str, state: dict) -> bool:
@@ -249,16 +309,10 @@ async def process_message(phone: str, user_message: str) -> list[str]:
     raw_response = response.choices[0].message.content
     print(f"Respuesta OpenAI: {raw_response[:100]}")
 
-    clean_message, state_updates, recommended_codes = _parse_state_update(raw_response)
+    clean_message, state_updates, recommended_codes, pdf_key = _parse_state_update(raw_response)
 
-    if "intent_route" in state_updates:
-        state["intent_route"] = state_updates["intent_route"]
-    if "lead_temperature" in state_updates:
-        state["lead_temperature"] = state_updates["lead_temperature"]
     if "name" in state_updates and state_updates["name"] and not state.get("name"):
         state["name"] = state_updates["name"]
-    if "need" in state_updates:
-        state["need_or_motivation"] = state_updates["need"]
     if "status" in state_updates:
         state["conversation_status"] = state_updates["status"]
     if recommended_codes:
@@ -270,9 +324,25 @@ async def process_message(phone: str, user_message: str) -> list[str]:
 
     responses.append(clean_message)
 
-    # Enviar imagen(es) del/los producto(s) recomendado(s)
+    # Enviar PDF de lead magnet si fue solicitado
+    if pdf_key:
+        from pdf_generator import LEAD_MAGNETS, OUTPUT_DIR, generate_all
+        generate_all()  # asegura que existan los PDFs
+        meta = LEAD_MAGNETS.get(pdf_key)
+        if meta:
+            pdf_path = OUTPUT_DIR / meta["file"]
+            pdf_url = f"https://whatsapp-bot-7sv8.onrender.com/lead-magnets/{meta['file']}"
+            responses.append({"type": "document", "url": pdf_url,
+                               "filename": meta["file"], "caption": f"🔥 {meta['title']}"})
+            # Registrar que se envió
+            sent = state.get("lead_magnets_sent", [])
+            if pdf_key not in sent:
+                sent.append(pdf_key)
+            state["lead_magnets_sent"] = sent
+
+    # Enviar imagen de producto si aplica (flujo anterior compatible)
     sent_urls = set()
-    for code in recommended_codes[:2]:  # máximo 2 imágenes
+    for code in recommended_codes[:2]:
         img_url = get_product_image(code)
         if img_url and img_url not in sent_urls:
             responses.append({"type": "image", "url": img_url, "caption": ""})

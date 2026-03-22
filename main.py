@@ -1,15 +1,18 @@
 import asyncio
 import logging
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from config import PORT
-from database import init_db
-from whapi_client import extract_message_data, send_text, send_image, transcribe_audio
+from database import init_db, get_all_subscribers
+from whapi_client import extract_message_data, send_text, send_image, send_document, transcribe_audio
 from agent import process_message
 from scheduler import run_scheduler
+from pdf_generator import generate_all, OUTPUT_DIR
 
 logging.basicConfig(
     level=logging.INFO,
@@ -21,9 +24,11 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
-    logger.info("Iniciando agente de ventas WhatsApp...")
+    logger.info("Iniciando Guerreros de Fuego WhatsApp Bot...")
     init_db()
     logger.info("Base de datos inicializada")
+    generate_all()
+    logger.info("Lead magnets PDFs listos")
 
     # Iniciar scheduler en background
     scheduler_task = asyncio.create_task(run_scheduler())
@@ -36,12 +41,49 @@ async def lifespan(app: FastAPI):
     logger.info("Agente detenido")
 
 
-app = FastAPI(title="Agente de Ventas WhatsApp", lifespan=lifespan)
+app = FastAPI(title="Guerreros de Fuego WhatsApp Bot", lifespan=lifespan)
 
 
 @app.get("/")
 async def health_check():
-    return {"status": "ok", "agent": "Agente de Ventas WhatsApp v1.0"}
+    return {"status": "ok", "agent": "Guerreros de Fuego Bot v2.0"}
+
+
+@app.get("/lead-magnets/{filename}")
+async def serve_lead_magnet(filename: str):
+    """Sirve los PDFs de lead magnets."""
+    path = OUTPUT_DIR / filename
+    if not path.exists() or not filename.endswith(".pdf"):
+        raise HTTPException(status_code=404, detail="PDF no encontrado")
+    return FileResponse(str(path), media_type="application/pdf", filename=filename)
+
+
+@app.post("/broadcast")
+async def broadcast(request: Request):
+    """
+    Endpoint para enviar un mensaje masivo a todos los suscriptores.
+    Body: {"message": "texto del mensaje", "secret": "gdf2026"}
+    """
+    body = await request.json()
+    if body.get("secret") != "gdf2026":
+        raise HTTPException(status_code=403, detail="No autorizado")
+
+    message = body.get("message", "").strip()
+    if not message:
+        raise HTTPException(status_code=400, detail="Mensaje vacío")
+
+    subscribers = get_all_subscribers()
+    asyncio.create_task(_send_broadcast(subscribers, message))
+    return {"status": "ok", "recipients": len(subscribers)}
+
+
+async def _send_broadcast(subscribers: list, message: str):
+    for sub in subscribers:
+        try:
+            await send_text(sub["phone"], message)
+            await asyncio.sleep(1)  # evitar rate limit
+        except Exception as e:
+            logger.error(f"Broadcast error a {sub['phone']}: {e}")
 
 
 @app.get("/webhook")
